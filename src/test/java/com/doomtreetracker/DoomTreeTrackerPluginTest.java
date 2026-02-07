@@ -1,13 +1,13 @@
-package com.example;
+package com.doomtreetracker;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class ExamplePluginTest
+public class DoomTreeTrackerPluginTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(ExamplePlugin.class);
+		ExternalPluginManager.loadBuiltin(DoomTreeTrackerPlugin.class);
 		RuneLite.main(args);
 	}
 }
