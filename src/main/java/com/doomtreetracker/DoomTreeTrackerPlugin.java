@@ -5,9 +5,13 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.NPC;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
@@ -19,8 +23,11 @@ import net.runelite.client.ui.overlay.OverlayManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 @Slf4j
 @PluginDescriptor(
@@ -44,8 +51,11 @@ public class DoomTreeTrackerPlugin extends Plugin {
     private DoomTreeTrackerOverlay overlay;
 
     private final List<WorldPoint> clickedOrbLocations = new ArrayList<>();
+    private final List<WorldPoint> visitedOrbLocations = new ArrayList<>();
 
     private final Map<Integer, NPC> volatileEarthNpcs = new HashMap<>();
+    private NPC volatileOrbNpc;
+    private WorldPoint volatileOrbLocation;
 
 
     @Override
@@ -57,6 +67,11 @@ public class DoomTreeTrackerPlugin extends Plugin {
     protected void shutDown() throws Exception {
         overlayManager.remove(overlay);
         reset();
+    }
+
+    @Provides
+    DoomTreeTrackerConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(DoomTreeTrackerConfig.class);
     }
 
     @Subscribe
@@ -77,6 +92,9 @@ public class DoomTreeTrackerPlugin extends Plugin {
         if (npcId == VOLATILE_EARTH_ID) {
             volatileEarthNpcs.put(npc.getIndex(), npc);
             log.debug("Volatile earth spawned at: {}", npc.getWorldLocation());
+        } else if (npcId == VOLATILE_ORB_ID) {
+            volatileOrbNpc = npc;
+            log.debug("Volatile orb spawned at: {}", npc.getWorldLocation());
         }
     }
 
@@ -87,7 +105,7 @@ public class DoomTreeTrackerPlugin extends Plugin {
 
         if (npcId == VOLATILE_EARTH_ID) {
             volatileEarthNpcs.remove(npc.getIndex());
-        } else if (npcId == VOLATILE_ORB_ID) { // If the orb has despawned, then shockwave phase has ended, we can remove the tiles
+        } else if (npcId == VOLATILE_ORB_ID) {
             reset();
         }
 
@@ -112,17 +130,43 @@ public class DoomTreeTrackerPlugin extends Plugin {
         }
     }
 
+    @Subscribe
+    public void onGameTick(GameTick event) {
+        //TODO: check if DOOM boss is still alive, if not we remove start and end points in case we attack the volatile earth trees but orb never spawns
+        //TODO: Make path tiles appear as soon as the 2nd tree is clicked, it only appears until the orb spawns
+        if (volatileOrbNpc != null) {
+            WorldPoint currentOrbLocation = getCenterLocation(volatileOrbNpc);
+
+            if (volatileOrbLocation != null && !volatileOrbLocation.equals(currentOrbLocation)) {
+                visitedOrbLocations.add(volatileOrbLocation);
+            }
+            volatileOrbLocation = currentOrbLocation;
+        }
+    }
+
     public List<WorldPoint> getClickedOrbLocations() {
         return clickedOrbLocations;
+    }
+
+    public WorldPoint getVolatileOrbLocation() {
+        return volatileOrbLocation;
+    }
+
+    public List<WorldPoint> getVisitedOrbLocations() {
+        return visitedOrbLocations;
     }
 
     public void reset() {
         clickedOrbLocations.clear();
         volatileEarthNpcs.clear();
+        volatileOrbLocation = null;
+        visitedOrbLocations.clear();
     }
 
-    @Provides
-    DoomTreeTrackerConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(DoomTreeTrackerConfig.class);
+    private WorldPoint getCenterLocation(NPC npc) {
+        WorldPoint southWest = npc.getWorldLocation();
+        int size = npc.getTransformedComposition().getSize();
+        int offset = size / 2;
+        return new WorldPoint(southWest.getX() + offset, southWest.getY() + offset, southWest.getPlane());
     }
 }

@@ -10,12 +10,14 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 
 import javax.inject.Inject;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DoomTreeTrackerOverlay extends Overlay {
     private final Client client;
     private final DoomTreeTrackerPlugin plugin;
     private final DoomTreeTrackerConfig config;
+    private final ArrayList<WorldPoint> markedTiles = new ArrayList<>();
 
     @Inject
     public DoomTreeTrackerOverlay(Client client, DoomTreeTrackerPlugin plugin, DoomTreeTrackerConfig config) {
@@ -29,6 +31,7 @@ public class DoomTreeTrackerOverlay extends Overlay {
     @Override
     public Dimension render(Graphics2D graphics) {
         List<WorldPoint> clickedLocations = plugin.getClickedOrbLocations();
+        WorldPoint volatileOrbLocation = plugin.getVolatileOrbLocation();
 
         // Only draw if we have exactly 2 clicked orbs
         if (clickedLocations.size() != 2) {
@@ -49,15 +52,26 @@ public class DoomTreeTrackerOverlay extends Overlay {
 
         // Draw the earthen shield's path from second orb to first orb
         if (config.showPathTiles()) {
-            drawPathTiles(graphics, secondOrb, firstOrb);
+            drawPathTiles(graphics, secondOrb, firstOrb, volatileOrbLocation);
         }
 
         return null;
     }
 
-    private void drawPathTiles(Graphics2D graphics, WorldPoint start, WorldPoint end) {
-        // Earthen shield spawns at second orb (start) and moves toward first orb (end)
-        // It prioritises diagonal movement before moving cardinally
+    private void removeMarkedTilesIfMatchingOrbLocation(WorldPoint volatileOrbLocation) {
+        if (volatileOrbLocation != null) {
+            markedTiles.removeIf(worldPoint ->
+                    worldPoint.getX() == volatileOrbLocation.getX() &&
+                            worldPoint.getY() == volatileOrbLocation.getY() &&
+                            worldPoint.getPlane() == volatileOrbLocation.getPlane()
+            );
+        }
+    }
+
+    private void drawPathTiles(Graphics2D graphics, WorldPoint start, WorldPoint end, WorldPoint volatileOrbLocation) {
+        markedTiles.clear();
+        List<WorldPoint> visitedLocations = plugin.getVisitedOrbLocations();
+
         int x = start.getX();
         int y = start.getY();
         int endX = end.getX();
@@ -67,14 +81,13 @@ public class DoomTreeTrackerOverlay extends Overlay {
         int dx = Integer.signum(endX - x);
         int dy = Integer.signum(endY - y);
 
-        // Phase 1: Move diagonally until aligned on one axis
+        // Phase 1: Move diagonally
         while (x != endX && y != endY) {
             x += dx;
             y += dy;
-
-            WorldPoint tilePoint = new WorldPoint(x, y, z);
-            if (!tilePoint.equals(end)) {
-                drawTileMarker(graphics, tilePoint, config.pathTileColor());
+            WorldPoint currentTile = new WorldPoint(x, y, z);
+            if (!volatileOrbLocation.equals(currentTile) && !visitedLocations.contains(currentTile)) {
+                markedTiles.add(currentTile);
             }
         }
 
@@ -85,8 +98,15 @@ public class DoomTreeTrackerOverlay extends Overlay {
             } else {
                 y += dy;
             }
+            WorldPoint currentTile = new WorldPoint(x, y, z);
+            // if orb is on the current tile, and current tile has been visited, do not add to markedTiles
+            if (!volatileOrbLocation.equals(currentTile) && !visitedLocations.contains(currentTile)) {
+                markedTiles.add(currentTile);
+            }
+        }
 
-            WorldPoint tilePoint = new WorldPoint(x, y, z);
+        // Draw remaining tiles
+        for (WorldPoint tilePoint : markedTiles) {
             if (!tilePoint.equals(end)) {
                 drawTileMarker(graphics, tilePoint, config.pathTileColor());
             }
