@@ -58,16 +58,6 @@ public class DoomTreeTrackerOverlay extends Overlay {
         return null;
     }
 
-    private void removeMarkedTilesIfMatchingOrbLocation(WorldPoint volatileOrbLocation) {
-        if (volatileOrbLocation != null) {
-            markedTiles.removeIf(worldPoint ->
-                    worldPoint.getX() == volatileOrbLocation.getX() &&
-                            worldPoint.getY() == volatileOrbLocation.getY() &&
-                            worldPoint.getPlane() == volatileOrbLocation.getPlane()
-            );
-        }
-    }
-
     private void drawPathTiles(Graphics2D graphics, WorldPoint start, WorldPoint end, WorldPoint volatileOrbLocation) {
         markedTiles.clear();
         List<WorldPoint> visitedLocations = plugin.getVisitedOrbLocations();
