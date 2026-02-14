@@ -14,7 +14,7 @@ repositories {
 }
 
 def runeLiteVersion = 'latest.release'
-def pluginMainClass = 'com.doomtreetracker.DoomTreeTrackerPluginTest'
+def pluginMainClass = 'com.doomshieldtracker.DoomShieldTrackerPluginTest'
 
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
@@ -27,7 +27,7 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 }
 
-group = 'com.doomtreetracker'
+group = 'com.doomshieldtracker'
 version = '1.0-SNAPSHOT'
 
 tasks.withType(JavaCompile).configureEach {

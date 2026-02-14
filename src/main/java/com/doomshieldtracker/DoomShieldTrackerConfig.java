@@ -1,10 +1,10 @@
-package com.doomtreetracker;
+package com.doomshieldtracker;
 
 import net.runelite.client.config.*;
 import java.awt.Color;
 
-@ConfigGroup("doomtreetracker")
-public interface DoomTreeTrackerConfig extends Config
+@ConfigGroup("doomshieldtracker")
+public interface DoomShieldTrackerConfig extends Config
 {
 	@ConfigSection(
 		name = "Tile Markers",

@@ -1,4 +1,4 @@
-package com.doomtreetracker;
+package com.doomshieldtracker;
 
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
@@ -13,15 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class DoomTreeTrackerOverlay extends Overlay {
+public class DoomShieldTrackerOverlay extends Overlay {
     private static final BasicStroke TILE_BORDER_STROKE = new BasicStroke(2);
 
     private final Client client;
-    private final DoomTreeTrackerPlugin plugin;
-    private final DoomTreeTrackerConfig config;
+    private final DoomShieldTrackerPlugin plugin;
+    private final DoomShieldTrackerConfig config;
 
     @Inject
-    public DoomTreeTrackerOverlay(Client client, DoomTreeTrackerPlugin plugin, DoomTreeTrackerConfig config) {
+    public DoomShieldTrackerOverlay(Client client, DoomShieldTrackerPlugin plugin, DoomShieldTrackerConfig config) {
         this.client = client;
         this.plugin = plugin;
         this.config = config;

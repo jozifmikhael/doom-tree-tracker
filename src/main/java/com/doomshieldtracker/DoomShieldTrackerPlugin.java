@@ -1,4 +1,4 @@
-package com.doomtreetracker;
+package com.doomshieldtracker;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -27,9 +27,9 @@ import java.util.Set;
 
 @Slf4j
 @PluginDescriptor(
-        name = "Doom Tree Tracker"
+        name = "Doom Shield Tracker"
 )
-public class DoomTreeTrackerPlugin extends Plugin {
+public class DoomShieldTrackerPlugin extends Plugin {
     private static final int VOLATILE_EARTH_ID = NpcID.DOM_SHOCKWAVE_PATH_NODE;
     private static final int SHIELD_ID = NpcID.DOM_SHOCKWAVE_SHIELD;
     private static final List<Integer> DOOM_BOSS_ID = List.of(
@@ -42,7 +42,7 @@ public class DoomTreeTrackerPlugin extends Plugin {
     private OverlayManager overlayManager;
 
     @Inject
-    private DoomTreeTrackerOverlay overlay;
+    private DoomShieldTrackerOverlay overlay;
 
     private final List<WorldPoint> clickedVolatileEarthLocations = new ArrayList<>();
     private final Set<WorldPoint> visitedShieldLocations = new HashSet<>();
@@ -64,8 +64,8 @@ public class DoomTreeTrackerPlugin extends Plugin {
     }
 
     @Provides
-    DoomTreeTrackerConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(DoomTreeTrackerConfig.class);
+    DoomShieldTrackerConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(DoomShieldTrackerConfig.class);
     }
 
     @Subscribe

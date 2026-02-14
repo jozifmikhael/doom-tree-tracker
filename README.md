@@ -1,4 +1,4 @@
-# Doom Tree Tracker
+# Doom Shield Tracker
 
 A RuneLite plugin that tracks the volatile shield path during the Doom of Mokhaiotl boss fight. It marks the tiles between the two volatile earth trees you attack, showing the path the shield will travel from the second tree to the first.
 
