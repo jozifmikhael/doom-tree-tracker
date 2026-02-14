@@ -1,97 +1,53 @@
 package com.doomtreetracker;
 
 import net.runelite.client.config.*;
-
 import java.awt.Color;
 
 @ConfigGroup("doomtreetracker")
 public interface DoomTreeTrackerConfig extends Config
 {
 	@ConfigSection(
-		name = "Orb Markers",
-		description = "Settings for orb tile markers",
+		name = "Tile Markers",
+		description = "Settings for starting and ending tile markers",
 		position = 0
 	)
-	String orbMarkersSection = "orbMarkers";
-
-	@ConfigSection(
-		name = "Line Settings",
-		description = "Settings for the line between orbs",
-		position = 1
-	)
-	String lineSettingsSection = "lineSettings";
+	String tileMarkersSection = "tileMarkers";
 
 	@ConfigSection(
 		name = "Path Tiles",
 		description = "Settings for tiles along the path",
-		position = 2
+		position = 1
 	)
 	String pathTilesSection = "pathTiles";
 
 	@ConfigItem(
-		keyName = "firstOrbColor",
-		name = "First Orb Color",
-		description = "Color of the first clicked orb marker",
-		section = orbMarkersSection,
+		keyName = "firstTileColor",
+		name = "First Tile Color",
+		description = "Color of the starting tile of the shield path",
+		section = tileMarkersSection,
 		position = 0
 	)
-	default Color firstOrbColor()
+	default Color firstTileColor()
 	{
-		return Color.GREEN;
+		return new Color(0, 255, 0, 80);
 	}
 
 	@ConfigItem(
-		keyName = "secondOrbColor",
-		name = "Second Orb Color",
-		description = "Color of the second clicked orb marker",
-		section = orbMarkersSection,
+		keyName = "secondTileColor",
+		name = "Second Tile Color",
+		description = "Color of the end tile of the shield path",
+		section = tileMarkersSection,
 		position = 1
 	)
-	default Color secondOrbColor()
+	default Color secondTileColor()
 	{
-		return Color.CYAN;
-	}
-
-	@ConfigItem(
-		keyName = "showLine",
-		name = "Show Line",
-		description = "Draw a line between the two clicked orbs",
-		section = lineSettingsSection,
-		position = 0
-	)
-	default boolean showLine()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		keyName = "lineColor",
-		name = "Line Color",
-		description = "Color of the line between orbs",
-		section = lineSettingsSection,
-		position = 1
-	)
-	default Color lineColor()
-	{
-		return Color.YELLOW;
-	}
-
-	@ConfigItem(
-		keyName = "lineWidth",
-		name = "Line Width",
-		description = "Width of the line between orbs",
-		section = lineSettingsSection,
-		position = 2
-	)
-	default int lineWidth()
-	{
-		return 3;
+		return new Color(0, 255, 255, 80);
 	}
 
 	@ConfigItem(
 		keyName = "showPathTiles",
 		name = "Show Path Tiles",
-		description = "Highlight tiles along the path between orbs",
+		description = "Highlight tiles along the path between the shield",
 		section = pathTilesSection,
 		position = 0
 	)
