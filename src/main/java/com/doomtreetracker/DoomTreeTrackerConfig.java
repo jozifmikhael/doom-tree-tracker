@@ -53,7 +53,7 @@ public interface DoomTreeTrackerConfig extends Config
 	)
 	default boolean showPathTiles()
 	{
-		return false;
+		return true;
 	}
 
 	@ConfigItem(
